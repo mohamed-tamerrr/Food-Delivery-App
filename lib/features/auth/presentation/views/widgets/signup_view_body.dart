@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_delivery_app/core/app_styles.dart';
+import 'package:food_delivery_app/core/utils/app_styles.dart';
+import 'package:food_delivery_app/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:food_delivery_app/features/auth/presentation/views/widgets/auth_custom_appbar.dart';
 import 'package:food_delivery_app/features/auth/presentation/views/widgets/auth_custom_button.dart';
 import 'package:food_delivery_app/features/auth/presentation/views/widgets/custom_text_field.dart';
-import 'package:food_delivery_app/features/auth/data/cubit/auth_cubit/auth_cubit.dart';
 
 import 'package:go_router/go_router.dart';
 
-class SignUpViewBody extends StatelessWidget {
-  SignUpViewBody({super.key});
-  String? email;
-  String? password;
+class SignUpViewBody extends StatefulWidget {
+  const SignUpViewBody({super.key});
+
+  @override
+  State<SignUpViewBody> createState() =>
+      _SignUpViewBodyState();
+}
+
+class _SignUpViewBodyState extends State<SignUpViewBody> {
+  final TextEditingController _emailController =
+      TextEditingController();
+
+  final TextEditingController _passwordController =
+      TextEditingController();
+
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   GlobalKey<FormState> formKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -56,11 +79,15 @@ class SignUpViewBody extends StatelessWidget {
                           style: AppStyles.medium20,
                         ),
                       ),
-
                       CustomTextField(
-                        onChanged: (data) {
-                          email = data;
+                        validator: (data) {
+                          if (data!.isEmpty) {
+                            return "This field is required";
+                          } else {
+                            return null;
+                          }
                         },
+                        controller: _emailController,
                         text: 'Example@gmail.com',
                       ),
                       SizedBox(height: 22),
@@ -75,9 +102,14 @@ class SignUpViewBody extends StatelessWidget {
                       SizedBox(height: 10),
 
                       CustomTextField(
-                        onChanged: (data) {
-                          password = data;
+                        validator: (data) {
+                          if (data!.isEmpty) {
+                            return "This field is required";
+                          } else {
+                            return null;
+                          }
                         },
+                        controller: _passwordController,
                         showIcon: true,
                         text: '***********',
                       ),
@@ -93,28 +125,57 @@ class SignUpViewBody extends StatelessWidget {
                       SizedBox(height: 10),
 
                       CustomTextField(
-                        onChanged: (data) {
-                          password = data;
+                        validator: (data) {
+                          if (data!.isEmpty) {
+                            return 'This field is requried';
+                          } else if (data !=
+                              _passwordController.text) {
+                            return 'It Should be the same password';
+                          } else {
+                            return null;
+                          }
                         },
+                        controller:
+                            _confirmPasswordController,
                         showIcon: true,
                         text: '***********',
                       ),
                       SizedBox(height: 60),
-                      AuthCustomButton(
-                        text: 'Sign Up',
-                        onTap: () {
-                          if (formKey.currentState!
-                              .validate()) {
-                            BlocProvider.of<AuthCubit>(
-                              context,
-                            ).signUp(
-                              email: email!,
-                              password: password!,
-                            );
-
+                      BlocListener<AuthCubit, AuthState>(
+                        listener: (context, state) {
+                          if (state is AuthSuccess) {
                             GoRouter.of(context).pop();
-                          } else {}
+                          } else if (state is AuthFail) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  state.msgError,
+                                ),
+                              ),
+                            );
+                          }
                         },
+                        child: AuthCustomButton(
+                          text: 'Sign Up',
+                          onTap: () {
+                            if (formKey.currentState!
+                                .validate()) {
+                              context
+                                  .read<AuthCubit>()
+                                  .signUp(
+                                    email: _emailController
+                                        .text
+                                        .trim(),
+                                    password:
+                                        _passwordController
+                                            .text
+                                            .trim(),
+                                  );
+                            } else {}
+                          },
+                        ),
                       ),
                     ],
                   ),

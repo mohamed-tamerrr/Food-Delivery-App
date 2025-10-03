@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_styles.dart';
+import 'package:food_delivery_app/core/utils/app_styles.dart';
 
 class AuthCustomAppBar extends StatelessWidget {
   const AuthCustomAppBar({super.key, required this.text});

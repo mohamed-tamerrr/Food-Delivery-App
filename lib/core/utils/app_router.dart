@@ -1,7 +1,7 @@
 import 'package:food_delivery_app/features/auth/presentation/views/login_view.dart';
 import 'package:food_delivery_app/features/auth/presentation/views/signup_view.dart';
 import 'package:food_delivery_app/features/home/presentation/views/home_view.dart';
-import 'package:food_delivery_app/features/home/presentation/views/profile_screen.dart';
+
 import 'package:go_router/go_router.dart';
 
 abstract class AppRouter {
@@ -14,10 +14,7 @@ abstract class AppRouter {
         path: '/',
         builder: (context, state) => LoginView(),
       ),
-      GoRoute(
-        path: kProfileView,
-        builder: (context, state) => ProfileView(),
-      ),
+
       GoRoute(
         path: kSignUp,
         builder: (context, state) => SignUpView(),

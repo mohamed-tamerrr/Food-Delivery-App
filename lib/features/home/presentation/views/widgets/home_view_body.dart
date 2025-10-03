@@ -5,6 +5,8 @@ class HomeViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: []);
+    return Center(
+      child: Container(child: Text('Home page')),
+    );
   }
 }

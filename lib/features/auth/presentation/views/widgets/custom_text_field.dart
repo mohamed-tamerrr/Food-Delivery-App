@@ -1,35 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_styles.dart';
+import 'package:food_delivery_app/core/utils/app_styles.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
     required this.text,
     this.showIcon = false,
-    this.isSecure = true,
-    required this.onChanged,
+    required this.controller,
+    this.validator,
   });
   final String text;
   final bool showIcon;
-  final bool isSecure;
-  final void Function(String)? onChanged;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
+  @override
+  State<CustomTextField> createState() =>
+      _CustomTextFieldState();
+}
 
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _obscureText = true;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Field is Required';
-        }
-      },
-      onChanged: onChanged,
+      controller: widget.controller,
+      validator: widget.validator,
+      obscureText: widget.showIcon ? _obscureText : false,
+
       decoration: InputDecoration(
-        suffixIcon: showIcon
-            ? isSecure
-                  ? Icon(Icons.visibility_off)
-                  : Icon(Icons.visibility_outlined)
+        suffixIcon: widget.showIcon
+            ? IconButton(
+                icon: Icon(
+                  _obscureText
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
             : null,
-        hint: Text(text, style: AppStyles.regular20),
+        hint: Text(widget.text, style: AppStyles.regular20),
         fillColor: Color(0xffF3E9B5),
         filled: true,
         enabledBorder: borderStyle(),

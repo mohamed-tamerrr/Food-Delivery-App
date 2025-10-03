@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery_app/core/app_styles.dart';
+import 'package:food_delivery_app/core/utils/app_styles.dart';
 
 class AuthCustomButton extends StatelessWidget {
-  const AuthCustomButton({super.key, required this.text, required this.onTap});
+  const AuthCustomButton({
+    super.key,
+    required this.text,
+    required this.onTap,
+  });
   final String text;
   final void Function()? onTap;
   @override
